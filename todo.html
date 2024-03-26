@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Application</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" /> -->
+    <!-- MDB -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="shortcut icon" href="
+    " type="image/x-icon">
+</head>
+
+<body>
+    <div class="col-lg-6 col-md-8 col-11 mx-auto mt-lg-5 mt-3 shadow-sm p-lg-5 p-3">
+        <h3 class="text-center text-primary text-decoration-underline">To-do Application</h3>
+        <p class="alert alert-danger text-center p-2 animate__animated animate__shakeX animate__infinite" id="errorMsg">
+            Please fill in the empty spaces</p>
+        <div class="form-outline">
+            <label class="form-label" for="form12">Add your To-do</label>
+            <input type="text" class="form-control shadow-sm mb-2" id="todo" autofocus />
+            <label class="form-label" for="form12">Add your Description</label>
+            <input type="text" class="form-control shadow-sm" id="todoDes" autofocus />
+        </div>
+        <button onclick="submitTodo()" class="btn btn-sm my-3 w-100 btn-primary">Submit</button>
+    </div>
+
+    <div class="col-lg-6 col-md-8 col-11 mx-auto mt-lg-5 mt-3 shadow-sm p-lg-3 p-3" id="bigDiv">
+        <div id="show" style="display: flex; gap: 20px; flex-wrap: wrap; "></div>
+    </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Edit To-do</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-outline">
+                            <p class="alert alert-danger text-center p-2 animate__animated animate__shakeX animate__infinite" id="errorLast">Please fill in the parameters</p>
+                            <label class="form-label" for="newTodo">Enter new To-do:</label>
+                            <input type="text" class="form-control shadow-sm mb-2" id="newTodo" autofocus/>
+                            <label class="form-label" for="newTodo">Enter new Description:</label>
+                            <input type="text" class="form-control shadow-sm" id="newTodoDes" autofocus/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary alert" onclick="editItem()" data-bs-dismiss="modal">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var allTodos = []
+            var newIndex = 0
+
+            function submitTodo() {
+                if ((todo.value && todoDes.value) == '') {
+                    errorMsg.style.display='block'
+                } else {
+                    var todoContainer = {
+                        inputOne: document.getElementById('todo').value,
+                        inputTwo: document.getElementById('todoDes').value
+                    }
+                    errorMsg.style.display='none'
+                    allTodos.push(todoContainer)
+                    console.log(allTodos);
+                    displayTodos()
+                    document.getElementById('todo').value = ''
+                    document.getElementById('todoDes').value = ''
+                    bigDiv.style.display = 'block'
+                }
+            }
+
+            function displayTodos() {
+                show.innerHTML = ''
+                allTodos.map((todoContainer, index) => {
+                    show.innerHTML += `
+                    <div class="card" style="width: 18rem;">
+                    <div class="card-body">
+                    <h5 class="card-title">${index + 1}</h5>
+                    <p class="card-text">${todoContainer.inputOne}</p>
+                    <p class="card-text">${todoContainer.inputTwo}</p>
+                    <a href="#" class="btn btn-sm my-3 mx-auto btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick='edit(${index})'>Edit</a>
+                    <a href="#" class="btn btn-sm my-3 mx-auto btn-danger" onclick='deleteTodo(${index})'>Delete</a>
+                    </div>
+                    </div>
+                    `
+                })
+            }
+
+            function deleteTodo(remove) {
+                var confirmation = confirm('Are you sure you want to delete?')
+                if (confirmation == true) {
+                    allTodos.splice(remove, 1)
+                    displayTodos()
+                }
+            }
+
+            function edit(i) {
+            newIndex = i
+        }
+
+        function editItem() {
+            if ((newTodo.value || newTodoDes.value) == "") {
+                errorLast.style.display='block'
+            } else {
+                var newValue = {
+                    inputOne: document.getElementById('newTodo').value,
+                    inputTwo: document.getElementById('newTodoDes').value
+                }
+                allTodos.splice(newIndex, 1, newValue);
+                displayTodos()
+            }
+        }
+        </script>
+</body>
+
+</html>
